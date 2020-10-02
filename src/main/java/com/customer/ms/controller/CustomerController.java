@@ -12,12 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.customer.ms.dao.CustomerDAO;
 import com.customer.ms.model.Customer;
+import com.customer.ms.model.CustomerM;
+import com.customer.ms.service.CustomerService;
 
 @RestController
 public class CustomerController {
 	
 	@Autowired
 	private CustomerDAO customerDAO;
+	
+	@Autowired
+	private CustomerService customerService;
 
 	@RequestMapping("/hello")
 	public String hello() {
@@ -48,6 +53,34 @@ public class CustomerController {
 	@RequestMapping(value = "/updateCustomer", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Customer updateCustomer(@RequestBody Customer customer) {
 		return customerDAO.updateCustomer(customer);
+	}
+	
+	@RequestMapping(value = "/mongoCustomers", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public List<CustomerM> getMongoCustomers() {
+		List<CustomerM> list = customerService.findAll();
+		return list;
+	}
+	
+	@RequestMapping(value = "/mongoCustomer/{cusId}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public CustomerM getMongoCustomer(@PathVariable("cusId") String cusId) {
+		return customerService.findById(cusId);
+	}
+	
+	@RequestMapping(value = "/addMongoCustomer", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public CustomerM addMongoCustomer(@RequestBody CustomerM customerm) {
+		return customerService.addCustomer(customerm);
+	}
+	
+	@RequestMapping(value = "/updateMongoCustomer", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_VALUE})
+	public CustomerM updateMongoCustomer(@RequestBody CustomerM customer) {
+		return customerService.updateCustomer(customer);
+	}
+	
+	@RequestMapping(value = "/deleteMongoCustomer/{cusId}", method = RequestMethod.DELETE, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public List<CustomerM> deleteMongoCustomer(@PathVariable("cusId") String cusId) {
+		customerService.deleteCustomer(cusId);
+		List<CustomerM> list = customerService.findAll();
+		return list;
 	}
 
 }
